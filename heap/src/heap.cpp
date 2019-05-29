@@ -2,6 +2,8 @@
 #include <iterator>
 #include <vector>
 
+#include "hash.hpp"
+
 template <typename KeyType,typename ValueType>
 
 class Heap{
@@ -13,12 +15,12 @@ class Heap{
 			ValueType value;
 
 			Node(void){}
-
+			
 			Node(KeyType key, ValueType value){
 				this->key = key;
 				this->value = value;
 			}
-
+			
 			bool operator < (Node a) const{
 				if(this->key < a.key){
 					return true;
@@ -40,19 +42,13 @@ class Heap{
 		int size;
 		int capacity;
 		Node* heap;
-
-
-		/*		void reajustPush(int index);
-				void reajustPop(int index);
-				void realloc(void);
-				void swap(int index, int secondIndex);*/
-
+		// hashTable for maintaining the position of all elements
+		// assuming all values are unique in the current application
+		// e.g all vertices in a graph have distinct labels
+		// its template args are the values and the respective array index
+		HashTable<ValueType, int> hash;
+			
 	public:
-		//		Heap(std::vector<Node> &vec);
-		/*		~Heap();
-				void push(KeyType key,ValueType value); 
-				Node pop(); 
-				void printAll(void);*/
 
 		Heap(){
 
@@ -60,30 +56,9 @@ class Heap{
 			capacity = 4;
 			heap = new Node [capacity];
 		}
-		/*
-		   Heap::Heap(std::vector<Node> &vec){
-
-		   size = std::end(vec) - std::begin(vec);
-		   capacity = size;
-		   heap = new Node[size];
-
-
-		   auto it = vec.begin();
-		   heap[0] = *it++;
-		   int index = 1;
-
-		   for(; it != vec.end();++it){
-
-		   heap[index].key = it->key;        
-		   heap[index].value = it->value;        
-		   reajustPush(index);
-		   index++;
-		   }
-		   }*/
-
 
 		~Heap(){
-			delete heap;
+			delete [] heap;
 		}
 
 		void push(KeyType key,ValueType value){
@@ -92,6 +67,10 @@ class Heap{
 			if(size+1 > capacity){
 				realloc();
 			}
+			
+			// adding index of this value to the hashTable
+			hash.insert(value,size);
+
 			heap[size++] = node;
 			reajustPush(size-1);
 		}
@@ -100,7 +79,7 @@ class Heap{
 			Node aux = heap[0];
 			heap[0] = heap[--size];
 			reajustPop(0);
-			return Node.value;
+			return aux.value;
 		}
 
 		bool isEmpty(void){
@@ -119,13 +98,20 @@ class Heap{
 
 			Node aux = this->heap[index];
 			this->heap[index] = heap[secondIndex];
+			
+			// using hash to update positions on the array of nodes
+			hash.updateValue(heap[secondIndex].value,index);
+			hash.updateValue(aux.value,secondIndex);
+			
 			this->heap[secondIndex] = aux;
-
 		}
 		
-		// todo
+		// Adjust priority of an element
 		void adjustPriority(KeyType key, ValueType value){
-
+			int index;
+			if(hash.retrieve(value,index)){
+				heap[index].key = key;	
+			}
 		}
 
 		void reajustPush(int index){
@@ -181,6 +167,28 @@ class Heap{
 			delete heap;
 			heap = aux;
 		}
+
+		/*
+		   Heap::Heap(std::vector<Node> &vec){
+
+		   size = std::end(vec) - std::begin(vec);
+		   capacity = size;
+		   heap = new Node[size];
+
+
+		   auto it = vec.begin();
+		   heap[0] = *it++;
+		   int index = 1;
+
+		   for(; it != vec.end();++it){
+
+		   heap[index].key = it->key;        
+		   heap[index].value = it->value;        
+		   reajustPush(index);
+		   index++;
+		   }
+		   }*/
+
 };
 
 
