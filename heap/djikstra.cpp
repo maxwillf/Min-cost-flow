@@ -79,6 +79,9 @@ std::pair<std::vector<int>,std::vector<int>> djikstra(Graph adj,int source){
 	return std::make_pair(dist,prev);
 }
 /*
+
+// main function just to test if djikstra is working properly
+// and most importantly, if the adjust priority function is working
 int main(void){
 
 	std::vector<Vertex> graph;
@@ -86,6 +89,7 @@ int main(void){
 	graph.push_back(Vertex(1));
 	graph.push_back(Vertex(2));
 	graph.push_back(Vertex(3));
+	graph.push_back(Vertex(4));
 
 	graph[0].addArc(Arc(1,2));
 	graph[0].addArc(Arc(2,8));
@@ -101,8 +105,13 @@ int main(void){
 		std::cout << i << std::endl;	
 	}
 
-	std::cout << "path from sink to source" <<  std::endl;	
-	std::cout << std::get<1>(result)[3] << std::endl;	
-	std::cout << std::get<1>(result)[2] << std::endl;	
-	std::cout << std::get<1>(result)[1] << std::endl;	
+	std::cout << "path from sink to source" <<  std::endl;
+	int current_node = std::get<1>(result)[3];
+	std::cout << current_node << std::endl;	
+	while(current_node != 0){
+		current_node = std::get<1>(result)[current_node];
+		std::cout << current_node << std::endl;	
+	}
+
+	return 0;
 }*/

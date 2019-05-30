@@ -1,1 +1,1 @@
-TODO: fix heap update priority, i forgot to adjust the modified node position
+Min-cost-flow problem solved with edmonds & karp and djikstra algorithm
