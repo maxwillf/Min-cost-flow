@@ -1,52 +1,10 @@
 // will use vector < vector<Arc> > adj
 // every arc in adj[0] will be the arcs that start on 0
-#include <vector>
-#include "heap.cpp"
-#include <utility>
-#include <iostream>
 
-#define LIMIT 2147483647
-
-class Arc{
-
-	public:
-	// label of the vertex on which this arc ends
-	int dest;
-	// weight of the arc
-	int weight;
-
-	Arc(int dest, int weight){
-		this->dest = dest;
-		this->weight = weight;
-	}
-};
-
-class Vertex
-{
-	public:
-	// number of the vertex
-	int label;
-	// list of arcs which begin on this vertex
-	std::vector<Arc> arcs;
-
-	Vertex(){}
-
-	Vertex(int label){
-		this->label = label;
-	}
-	
-	Vertex(int label,std::vector<Arc> arcs){
-		this->label = label;
-		this->arcs = arcs;
-	}
-
-	void addArc(Arc arc){
-		arcs.push_back(arc);
-	}
-};
+#include "djikstra.h"
 
 // injecting specialization of std::hash into namespace std so that we can use
-// it with the hashtable that is under the heap
+// it with the hashtable that is inside the heap
 namespace std
 {
 	template<> struct hash<Vertex>
@@ -74,44 +32,53 @@ namespace std
 }
 
 
-// todo change type signature
-std::pair<std::vector<int>,std::vector<int>> djikstra(std::vector<Vertex> adj,int source){
+std::pair<std::vector<int>,std::vector<int>> djikstra(Graph adj,int source){
 	
 	std::vector<int> dist(adj.size());
 	std::vector<int> prev(adj.size());
 
 	// distance between vertices and the source
 	dist[source] = 0;
+	prev[0] = 0;
 	// initializing priority queue
 	Heap<int,Vertex> queue;
 	queue.push(source,adj[source]);
 	
 	for (int i = 1; i < adj.size(); ++i) {
+		prev[i] = -1;
 		dist[i] = LIMIT;	
 		queue.push(LIMIT,adj[i]);
 	}
 
-
+	// while the queue isn't empty, extract the next vertex with the least
+	// distance to the source
 	while( !queue.isEmpty() ){
 		auto vertex = queue.pop();
 		
 		for( Arc arc : vertex.arcs ) {
 			
-			int alt = dist[vertex.label] + arc.weight;
-			// checks if alternative path is the	
-			if (alt < dist[arc.dest]){
-					
-				dist[arc.dest] = alt;	
-				prev[arc.dest] = vertex.label;
-				queue.adjustPriority(alt,adj[arc.dest]);
+			// since we are concerned with flow, we will only use non-saturated edges
+			if( arc.residualCapacity() > 0){	
 
+				int alt = dist[vertex.label] + arc.upperBound;
+				// checks if alternative path is shorter than current path to
+				// the vertex and updates it if it is
+				if (alt < dist[arc.dest]){
+
+					dist[arc.dest] = alt;	
+					prev[arc.dest] = vertex.label;
+					queue.adjustPriority(alt,adj[arc.dest]);
+
+				}
 			}
 		}
 	}
-
+	
+	// returns the list of smallest distances to the source and the list of
+	// previous vertices in the shortest path to the vertex 
 	return std::make_pair(dist,prev);
 }
-
+/*
 int main(void){
 
 	std::vector<Vertex> graph;
@@ -121,7 +88,7 @@ int main(void){
 	graph.push_back(Vertex(3));
 
 	graph[0].addArc(Arc(1,2));
-	graph[0].addArc(Arc(2,5));
+	graph[0].addArc(Arc(2,8));
 	graph[1].addArc(Arc(2,1));
 	graph[1].addArc(Arc(3,6));
 	graph[2].addArc(Arc(3,1));
@@ -138,4 +105,4 @@ int main(void){
 	std::cout << std::get<1>(result)[3] << std::endl;	
 	std::cout << std::get<1>(result)[2] << std::endl;	
 	std::cout << std::get<1>(result)[1] << std::endl;	
-}
+}*/

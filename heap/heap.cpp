@@ -1,7 +1,9 @@
+#ifndef HEAP
+#define HEAP
+
 #include <stdio.h>
 #include <iterator>
 #include <vector>
-
 #include "hash.hpp"
 
 template <typename KeyType,typename ValueType>
@@ -191,4 +193,4 @@ class Heap{
 
 };
 
-
+#endif
