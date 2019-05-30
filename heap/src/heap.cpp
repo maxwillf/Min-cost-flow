@@ -109,8 +109,24 @@ class Heap{
 		// Adjust priority of an element
 		void adjustPriority(KeyType key, ValueType value){
 			int index;
+			// if the element exists, retrieve it's heap index
 			if(hash.retrieve(value,index)){
-				heap[index].key = key;	
+
+				auto oldKey = heap[index].key;
+				heap[index].key = key;
+				
+				// updating the node's position, since the priority has changed its position
+				// probably doesn't respect the heap property anymore
+
+				// if the new key value is higher than it needs to go down the tree
+				// since it's a heapmin
+				if(oldKey < key){
+					reajustPop(index);
+				}
+				// it goes up otherwise
+				else {
+					reajustPush(index);
+				}
 			}
 		}
 
@@ -164,7 +180,7 @@ class Heap{
 			for (int i = 0; i < size; ++i) {
 				aux[i] = heap[i]; 
 			}
-			delete heap;
+			delete [] heap;
 			heap = aux;
 		}
 
