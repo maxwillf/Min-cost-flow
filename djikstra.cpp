@@ -60,7 +60,7 @@ std::pair<std::vector<int>,std::vector<int>> djikstra(Graph adj,int source){
 			// since we are concerned with flow, we will only use non-saturated edges
 			if( arc.residualCapacity() > 0){	
 
-				int alt = dist[vertex.label] + arc.upperBound;
+				int alt = dist[vertex.label] + arc.weight;
 				// checks if alternative path is shorter than current path to
 				// the vertex and updates it if it is
 				if (alt < dist[arc.dest]){

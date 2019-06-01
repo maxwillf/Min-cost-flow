@@ -1,17 +1,21 @@
 #include <vector>
+#include <iostream>
 
 class Arc{
 
 	public:
 	// label of the vertex on which this arc ends
 	int dest;
+	// distance/weight of the edge
+	int weight;
 	// upperBound of the arc. Maximum amount of flow that can go through the arc
 	int upperBound;
 	// current amount of flow going through the arc
 	int currentFlow;
 
-	Arc(int dest, int upperBound){
+	Arc(int dest, int weight, int upperBound){
 		this->dest = dest;
+		this->weight = weight;
 		this->upperBound = upperBound;
 		currentFlow = 0;
 	}
@@ -47,9 +51,9 @@ class Vertex
 	// returns the amount of flow that can be passed through an edge
 	int residualCapacity(int v) const{
 		// searches arc from this source vertex to vertex v
-		for( Arc arc : arcs){
-			if(arc.dest == v){
-				return arc.residualCapacity();
+		for (int i = 0; i < arcs.size(); ++i) {
+			if(arcs[i].dest == v){
+				return arcs[i].residualCapacity();
 			}
 		}
 		// returns impossible value if there is no such arc
@@ -71,6 +75,13 @@ class Vertex
 			}
 		}*/
 		return;
+	}
+
+	void printEdges(){
+		for(Arc arc : arcs){
+			std::cout << "Edge from " << label << " to " << arc.dest << " with limit " 
+				<< arc.upperBound << " and current flow " << arc.currentFlow << std::endl;
+		}
 	}
 };
 

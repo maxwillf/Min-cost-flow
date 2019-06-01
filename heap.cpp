@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <iterator>
 #include <vector>
-#include "hash.hpp"
+#include "hash.h"
 
 template <typename KeyType,typename ValueType>
 

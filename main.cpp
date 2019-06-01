@@ -37,9 +37,27 @@ void sendFlow(Graph& graph, std::vector<int>& prev, int flow){
 	while(dest != 0){
 		
 		graph[origin].addFlow(dest,flow);
+		// sendflow using residual nets
+		graph[dest].addFlow(origin,flow * -1);
 		dest = origin;
 		origin = prev[dest]; 
 	}
+}
+
+// checks if there is a path from the origin to the sink
+bool ThereIsPathToSink(std::vector<int>& prev) {
+
+	int dest = prev.size()-1;
+	int origin = prev[dest];
+	while(dest != 0){
+		// if the path abruptly ends 
+		if(dest == -1){
+			return false;	
+		}
+		dest = origin;
+		origin = prev[dest]; 
+	}
+	return true;
 }
 
 int minCostFlow(Graph& graph){
@@ -62,22 +80,44 @@ int minCostFlow(Graph& graph){
 	// the sink is the vertex on the last index of the array
 	int sink = graph.size()-1;
 
-	bool ThereIsPathToSink = (prev[sink] != -1);
-
 	// checks if there is a vertex that becomes before the sink (vertex in the
 	// last index) in the shortest
 	// paths found, if there isn't then there is no path from source to sink
-	while(ThereIsPathToSink){
+	while(ThereIsPathToSink(prev)){
 
 		flow = pathFlow(graph,prev);
 		maxFlow += flow;
 		sendFlow(graph,prev,flow);
 		prev = std::get<1> (djikstra(graph,0));
-		ThereIsPathToSink = (prev[sink] != -1);
 	}
 	return maxFlow;
 }
 
+Graph createResidualNetwork(const Graph & graph){
+
+	// copying the original graph
+	Graph residualNet;
+	for(Vertex v : graph){
+		residualNet.push_back(v.label);
+
+		for(Arc arc : v.arcs){
+			residualNet[v.label].addArc(Arc(arc.dest,arc.weight,arc.upperBound));
+		}
+	}
+
+	// adding the symmetrical edges
+	
+	for(Vertex v : graph){
+		for(Arc arc : v.arcs){
+
+			Arc e = Arc(v.label,arc.weight,arc.upperBound);
+			e.currentFlow = e.upperBound;
+			residualNet[arc.dest].addArc(e);
+		}
+	}
+
+	return residualNet;
+}
 
 int main(int argc, char *argv[])
 {
@@ -88,13 +128,17 @@ int main(int argc, char *argv[])
 	graph.push_back(Vertex(2));
 	graph.push_back(Vertex(3));
 
-	graph[0].addArc(Arc(1,2));
-	graph[0].addArc(Arc(2,8));
-	graph[1].addArc(Arc(2,1));
-	graph[1].addArc(Arc(3,6));
-	graph[2].addArc(Arc(3,1));
+	graph[0].addArc(Arc(1,1,2));
+	graph[0].addArc(Arc(2,1,8));
+	graph[1].addArc(Arc(2,1,1));
+	graph[1].addArc(Arc(3,1,6));
+	graph[2].addArc(Arc(3,1,1));
 
-	std::cout << minCostFlow(graph) << std::endl;
-
+	auto net = createResidualNetwork(graph);
+	std::cout << minCostFlow(net) << std::endl;
+	
+	for(auto v : net){
+		v.printEdges();
+	}
 	return 0;
 }
