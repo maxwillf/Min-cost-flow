@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 
+
 class Arc{
 
 	public:
@@ -77,6 +78,7 @@ class Vertex
 		return;
 	}
 
+
 	void printEdges(){
 		for(Arc arc : arcs){
 			std::cout << "Edge from " << label << " to " << arc.dest << " with limit " 
@@ -86,3 +88,4 @@ class Vertex
 };
 
 typedef std::vector<Vertex> Graph;
+

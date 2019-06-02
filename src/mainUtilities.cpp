@@ -1,6 +1,17 @@
-#include "heap.cpp"
-#include "djikstra.h"
-#include <iostream>
+#include "mainUtilities.h"
+
+// after the algorithm has finished we need to update the edges of the
+// original graph in order to properly print our solution
+// the first argument is the original graph and the second one is the
+// residual network that was used in the min-cost-flow algorithm
+void copyNonResidualNetworkEdges(Graph & graph, const Graph & net){
+		for (int i = 0; i < graph.size(); ++i) {
+			// modifying the original graph
+			for (int j = 0; j < graph[i].arcs.size(); ++j) {
+				graph[i].arcs[j] = net[i].arcs[j];
+			}
+		}
+	}
 
 //helper function to be used inside the min-cost-flow function 
 // it finds the amount of flow that can be sent through the path
@@ -119,26 +130,36 @@ Graph createResidualNetwork(const Graph & graph){
 	return residualNet;
 }
 
-int main(int argc, char *argv[])
-{
+Graph readGraphFromFile(char * str){
 
-	std::vector<Vertex> graph;
-	graph.push_back(Vertex(0));
-	graph.push_back(Vertex(1));
-	graph.push_back(Vertex(2));
-	graph.push_back(Vertex(3));
+	Graph graph;
 
-	graph[0].addArc(Arc(1,1,2));
-	graph[0].addArc(Arc(2,1,8));
-	graph[1].addArc(Arc(2,1,1));
-	graph[1].addArc(Arc(3,1,6));
-	graph[2].addArc(Arc(3,1,1));
+	std::ifstream ifs(str);
+	std::string line;
+	std::stringstream ss;
 
-	auto net = createResidualNetwork(graph);
-	std::cout << minCostFlow(net) << std::endl;
-	
-	for(auto v : net){
-		v.printEdges();
+	int graphSize;
+
+	// if the file is on proper format defined by the README the first variable is
+	// an int containing the graphsize
+	getline(ifs,line);
+	ss << line;
+	ss >> graphSize;
+
+	// initialize graph vertices
+	for (int i = 0; i < graphSize; ++i) {
+		graph.push_back(Vertex(i));	
 	}
-	return 0;
+
+	int label,dest,weight,upperBound;
+
+	// add all arcs defined in the txt file 
+	while(getline(ifs,line)){
+		ss = std::stringstream(line);
+		ss >> label >> dest >> weight >> upperBound;
+		graph[label].addArc(Arc(dest,weight,upperBound));
+	//	std::cout <<  label << dest << weight << upperBound <<  std::endl;
+	}
+	return graph;
 }
+
