@@ -37,6 +37,7 @@
 \newpage
 
 \section{Introdução do Problema}
+\label{sec:intro}
 
 A demanda incessante por produtos requer que fábricas por todo o mundo trabalhem
 à todo vapor para supri-la e isto chama atenção ao problema associado a este o
@@ -49,8 +50,9 @@ No contexto de grafos, as fábricas e as lojas são tratadas como vértices e as
 arestas são as "estradas" entre as localizações de cada dois vertices.
 
 \section{Modelagem do problema}
+\label{sec:modelling}
 
-Como mencionado na Introdução, cada vértice representa ou uma fábrica ou uma
+Como mencionado na \ref{sec:intro}, cada vértice representa ou uma fábrica ou uma
 loja, e as arestas entre cada dois vértices representariam um trajeto possível
 entre as duas localizaçoes (uma "estrada"). Neste trabalho trataremos este como
 um problema de fluxo à custo mínimo. Assim, serão necessárias algumas
@@ -71,10 +73,12 @@ máxima infinita.
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{grafo.png}
   \caption{Um grafo modelado com o problema de fluxo a custo mínimo.}
-  \label{fig:graph}
+  \label{fig:modeled-graph}
 \end{figure}
 
 \subsection{Estrutura do vértice}
+\label{subsec:vertex-structure}
+
 Dada a modelagem proposta, a estrutura dos vértices não difere da estrutura de
 um vértice em um problema qualquer de grafos, visto que a informação vital
 necessária para a solução do problema reside nas arestas, no mínimo seria
@@ -82,6 +86,8 @@ necessário que cada vértice armazenasse um id e os vértices adjacentes,
 dependendo da forma de implementação.
 
 \subsection{Arcos}
+\label{subsec:arches}
+
 Os arcos, sendo os portadores das informações essenciais para a solução deste
 problema, possuem os valores das capacidades minimas e máximas das arestas (em
 relação ao fluxo) e o valor do custo para transportar uma unidade do produto por
@@ -92,8 +98,10 @@ demanda real da loja. Todos os outros arcos tem capacidade mínima 0 e capacidad
 máxima infinita.
 
 \section{Estado da arte}
+\label{sec:state-of-the-art}
 
 \subsection{Minimum Mean Cycle-Cancelling}
+\label{subsec:min-mean-cycle-cancelling}
 
 A princípio, para cada aresta entre dois vertices $(u,v)$ cria-se uma aresta
 $(v,u)$ com custo $c(v,u) = -c(u,v)$. Definimos o custo de um ciclo como a soma
@@ -116,6 +124,8 @@ algoritmo, como para grafos com arestas de peso inteiro o algoritmo tem
 complexidade $O(mn \log(nC))$
 
 \subsection{Network Simplex}
+\label{subsec:network-simplex}
+
 O algoritmo simplex mantém uma rede de fluxo viável a cada iteração. Uma solução
 básica para o problema de fluxo à custo mínimo é denotado por uma tripla
 $\langle T,L,U \rangle$, onde $T,L$ e $U$ são partições do conjunto de arcos.
@@ -161,10 +171,11 @@ Assim, podemos definir o algoritmo em sua totalidade como abaixo:
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{simplex.png}
   \caption{Algoritmo network simplex.}
-  \label{fig:alg}
+  \label{fig:netwok-simplex-algorithm}
 \end{figure}
 
 \section{Menções importantes}
+\label{sec:important-mentions}
 
 Soluções para este problema cuja menção é indispensável encontram-se abaixo:
 
@@ -216,35 +227,85 @@ linear.
 \end{itemize}
 
 \section{Solução escolhida}
+\label{sec:solution}
+
+\subsection{Dijkstra}
+\label{subsec:dijkstra}
+
+Como a busca em largura necessita que os pesos das arestas sejam 1, precisamos
+utilizar um algoritmo de busca diferente para encontrar o menor caminho, visto
+que dada modelagem do problema feita na seção \ref{sec:modelling} cada aresta
+tem um peso associado, que se refere ao custo de transporte de um vértice ao
+outro. O algoritmo escolhido para encontrar o menor caminho é o algoritmo de
+Dijkstra.
+
+O Dijkstra funciona da seguinte forma:
+
+Chamemos o vértice de onde começamos de \emph{vértice inicial} e \emph{distância
+    do nó $Y$} a distância entre o vértice inicial até o vértice $Y$. O
+algoritmo atribui valores iniciais de distância e vai melhorando a cada
+itereção, como segue:
+
+\begin{enumerate}
+\item Marque todos os vértices não visitados. Crie um conjunto de todos os
+    vértices não visitados chamado \emph{conjunto não visitado} $Q$.
+\item Atribua a cada vértice uma \emph{tentativa de distância}: atribua a zero
+    para o nosso vértice inicial e infinito para todos os outros vértices. O
+    vértice inicial será nosso \emph{vértice atual}.
+\item Para o vértice atual $v$, considere todos os seus vizinhos não visitados
+    $v' \in Q$ e calcule sua \emph{tentativa de distância} através do nó atual.
+    Compare a nova \emph{tentativa de distância} com a atualmente atribuída e
+    atribua a menor entre elas.
+\item Após considerar todos os vizinhos do vértice atual $v$, marque o vértice
+    atual como visitado e o remova do conjunto não visitado. Um vértice visitado
+    nunca vai ser verificado novamente.
+\item Se o vértice de destino $d$ tiver sido marcado como visitado, ou se a
+    menor tentativa de distância entre os vértices do conjunto $Q$ for infinito,
+    então pare. O algoritmo terminou.
+\item Caso contrário, escolha o vértice $u$ do conjunto $Q$ de vértices não
+    visitados que está marcado com a menor tentativa de distância; $u$ será o
+    ``vértice atual''. Volte ao passo 3.
+\end{enumerate}
+
+A complexidade do algoritmo de Dijkstra é $O(m \log n + n)$, visto que visitamos
+cada nó uma vez ($O(n)$) e acessamos cada vértice adjacente exatamente duas
+vezes ($O(m)$), cada vez acessando a lista de prioridade no máximo duas vezes
+($O(\log n)$).
 
 \subsection{Edmonds e Karp}
+\label{subsec:edmonds-karp}
 
-Uma das soluções mais simples para a resolução do problema de fluxo à custo
-mínimo é por meio de uma variante do algoritmo de Ford-Fulkerson, o algoritmo de
-Edmonds e Karp, onde invés de utilizar um grafo com arestas todas de peso 1,
-utilizamos arestas com o peso associado ao custo do problema em questão. Durante
-a execução deste algoritmo, é criado um novo grafo baseado no original,
-denominado de rede residual, onde os vértices são os mesmos que os do grafo
-anterior, porém é composto apenas por arestas nas quais haviam folga
-anteriormente (o fluxo que passava pela aresta era menor do que a capacidade
-máxima da aresta). Uma das características principais do algoritmo de Edmonds e
-Karp é que à cada iteração deste, é sempre encontrado o menor caminho possível
-entre a fonte e o sumidouro da rede residual, por meio de uma busca em largura.
-Entretanto, a busca em largura garante o menor caminho unicamente quando o peso
-das arestas é igual a um. Assim, para encontra-lo é necessário o uso de um
-algoritmo de menor caminho, como o Dijkstra por exemplo. Porém, como o peso das
-arestas em questão era o custo associado de transporte do produto, conseguimos a
-partir deste algoritmo o caminho de menor custo. Ao fim do algoritmo teremos,
-por corretude do algoritmo de Edmonds e Karp, o fluxo desejado na rede, e por
-meio da nossa escolha de caminhos de aumento de fluxo, teremos que este fluxo
-será o de menor custo associado.
+A solução escolhida para o atual projeto é uma variante do algoritmo de
+Ford-Fulkerson, o algoritmo de Edmonds e Karp, onde invés de utilizar um grafo
+com arestas todas de peso 1, utilizamos arestas com o peso associado ao custo do
+problema em questão. Durante a execução deste algoritmo, é criado um novo grafo
+baseado no original, denominado de rede residual, onde os vértices são os mesmos
+que os do grafo anterior, porém é composto apenas por arestas nas quais haviam
+folga anteriormente (o fluxo que passava pela aresta era menor do que a
+capacidade máxima da aresta). Uma das características principais do algoritmo de
+Edmonds e Karp é que à cada iteração deste, é sempre encontrado o menor caminho
+possível entre a fonte e o sumidouro da rede residual, por meio de uma busca em
+largura. Entretanto, a busca em largura garante o menor caminho unicamente
+quando o peso das arestas é igual a um. Assim, para encontra-lo é necessário o
+uso de um algoritmo de menor caminho, como o Dijkstra por exemplo. Porém, como o
+peso das arestas em questão era o custo associado de transporte do produto,
+conseguimos a partir deste algoritmo o caminho de menor custo. Ao fim do
+algoritmo teremos, por corretude do algoritmo de Edmonds e Karp, o fluxo
+desejado na rede, e por meio da nossa escolha de caminhos de aumento de fluxo,
+teremos que este fluxo será o de menor custo associado.
 
 Analogamente ao algoritmo de Edmonds e Karp original, a complexidade deste
 algoritmo é $O(nm) \times T(n,m)$ onde $T(n,m)$ é a complexidade do algoritmo de
-menor caminho utilizado. Tomando como caso espécifico o algoritmo de Djikstra
+menor caminho utilizado, $m$ é a quantidade de arestas e $n$ a quantidade de
+vértices. A complexide $T(n,m)$ do algoritmo de Dijkstra implementado é
+$O((m + n) \log n)$, visto que ele foi implementado com lista de adjacência e file de
+prioridade,
+
+Tomando como caso espécifico o algoritmo de Djikstra
 temos $O(m^2 n + n^2 \log n)$.
 
 \section{Conclusão}
+\label{sec:conclusion}
 
 Além de categorizar o problema de abastecimento entre fábricas e lojas como um
 problema de fluxo à custo mínimo, apresentamos sua modelagem e algumas soluções
@@ -254,3 +315,4 @@ juntamente com o algoritmo de Dikstra pode ser o suficiente, este problema
 também pode ser visto como um de programação linear, como no algoritmo simplex.
 
 \end{document}
+
