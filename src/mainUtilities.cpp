@@ -157,8 +157,24 @@ Graph readGraphFromFile(char * str){
 	while(getline(ifs,line)){
 		ss = std::stringstream(line);
 		ss >> label >> dest >> weight >> upperBound;
+
+		// exits if given input file has out of bounds indexes
+		if(label >= graphSize or dest >= graphSize or label < 0 or dest < 0){
+			std::cerr << "Incorrect graph labels used. Indexes are out of bounds. Please use a proper input file" << std::endl;
+			exit(-1);
+		}
+
+		// exits if edges weights are negative values. the algorithm wouldn't
+		// work because djikstra doesn't support negative values
+		if( weight < 0){
+			std::cerr << "Negative edge's weight used. Djikstra doesn't work properly with this kind of input. Please use edges with non-negative weights only." << std::endl;
+		}
+
 		graph[label].addArc(Arc(dest,weight,upperBound));
-	//	std::cout <<  label << dest << weight << upperBound <<  std::endl;
+
+#ifdef DEBUG
+		std::cout <<  label << dest << weight << upperBound <<  std::endl;
+#endif
 	}
 	return graph;
 }
