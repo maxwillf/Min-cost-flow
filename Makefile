@@ -1,8 +1,9 @@
 # Default Conventions
-Target = min-cost-flow 	# Name of the project
+# Name of the project
+Target = min-cost-flow
 INCLUDES = include
 HEADERS = $(wildcard $(INCLUDES)/*)
-CXX = g++
+CXX = c++
 CXXFLAGS = -std=c++11 -g -ggdb -I $(INCLUDES)
 DOCS = html latex
 RM = -rm
@@ -21,8 +22,8 @@ all: project #docs
 
 project: $(OBJECTS) $(HEADERS) | $(BINDIR)
 	$(CXX) $(OBJECTS) $(CXXFLAGS) -o $(BINDIR)/$(Target)
-	@echo "link created: "
-	@ln -sfv $(BINDIR)/$(Target) $(Target)
+	@ln -sf $(BINDIR)/$(Target) $(Target)
+	@echo "link created: $(BINDIR)/$(Target) -> $(Target)"
 
 docs: 
 	@doxygen Doxyfile
