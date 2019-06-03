@@ -1,9 +1,8 @@
 #include <vector>
 #include <iostream>
 
-
-class Arc{
-
+class Arc
+{
 	public:
 	// label of the vertex on which this arc ends
 	int dest;
@@ -39,7 +38,7 @@ class Vertex
 	Vertex(int label){
 		this->label = label;
 	}
-	
+
 	Vertex(int label,std::vector<Arc> arcs){
 		this->label = label;
 		this->arcs = arcs;
@@ -81,7 +80,7 @@ class Vertex
 
 	void printEdges(){
 		for(Arc arc : arcs){
-			std::cout << "Edge from " << label << " to " << arc.dest << " with limit " 
+			std::cout << "Edge from " << label << " to " << arc.dest << " with limit "
 				<< arc.upperBound << " and current flow " << arc.currentFlow << std::endl;
 		}
 	}
