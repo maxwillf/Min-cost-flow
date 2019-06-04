@@ -3,7 +3,7 @@
 Target = min-cost-flow
 INCLUDES = include
 HEADERS = $(wildcard $(INCLUDES)/*)
-CXX = c++
+CXX = eg++
 CXXFLAGS = -std=c++11 -g -ggdb -I $(INCLUDES)
 DOCS = html latex
 RM = -rm

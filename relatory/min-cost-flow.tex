@@ -3,30 +3,16 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{float}
-\usepackage{listings}
-
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage{hyperref}
 
 \usepackage{biblatex}
 \addbibresource{sample.bib}
 
 \graphicspath{./imgs}
 
-\lstset{
-    language=C,
-    aboveskip=3mm,
-    belowskip=3mm,
-    basicstyle={\medium\tttfamily},
-    tabsize=4,
-    numbers=left,
-    captionpos=b,
-    numbersep=8pt
-}
-
-\title{Problema de abastecimento à custo mínimo}
+\title{Abastecimento de lojas à custo mínimo}
 \author{Max William S. Filgueira e João Pedro de A. Paula}
-\date{March 2019}
+\date{Junho 2019}
 
 \begin{document}
 
@@ -52,10 +38,10 @@ arestas são as "estradas" entre as localizações de cada dois vertices.
 \section{Modelagem do problema}
 \label{sec:modelling}
 
-Como mencionado na \ref{sec:intro}, cada vértice representa ou uma fábrica ou uma
-loja, e as arestas entre cada dois vértices representariam um trajeto possível
-entre as duas localizaçoes (uma "estrada"). Neste trabalho trataremos este como
-um problema de fluxo à custo mínimo. Assim, serão necessárias algumas
+Como mencionado na seção \ref{sec:intro}, cada vértice representa ou uma fábrica
+ou uma loja, e as arestas entre cada dois vértices representariam um trajeto
+possível entre as duas localizaçoes (uma "estrada"). Neste trabalho trataremos
+este como um problema de fluxo à custo mínimo. Assim, serão necessárias algumas
 modificações no grafo. A princípio, adicionaremos informações nas arestas, as
 quais conterão os valores da capacidade mínimo e máxiao que pode percorrer esta
 aresta e também um valor inteiro não-negativo associado ao custo de transporte
@@ -213,8 +199,8 @@ de scaling para encontrar um algoritmo de complexidade O(n2(logn)log(nC)).
 
 \begin{itemize}
 \item Andrew V. Goldberg \& Robert E. Tarjan (1990). "Finding minimum-cost
-circulations by successive approximation". Math. Oper. Res. 15 (3): 430–466.
-doi:10.1287/moor.15.3.430.
+  circulations by successive approximation". Math. Oper. Res. 15 (3): 430–466.
+  doi:10.1287/moor.15.3.430.
 \end{itemize}
 
 Algoritmo network simplex, subset do algoritmo simplex clássico da programação
@@ -222,8 +208,8 @@ linear.
 
 \begin{itemize}
 \item James B. Orlin (1997). "A polynomial time primal network simplex algorithm
-    for minimum cost flows". Mathematical Programming. 78 (2): 109–129.
-    doi:10.1007/bf02614365. hdl:1721.1/2584.
+  for minimum cost flows". Mathematical Programming. 78 (2): 109–129.
+  doi:10.1007/bf02614365. hdl:1721.1/2584.
 \end{itemize}
 
 \section{Solução escolhida}
@@ -237,34 +223,37 @@ utilizar um algoritmo de busca diferente para encontrar o menor caminho, visto
 que dada modelagem do problema feita na seção \ref{sec:modelling} cada aresta
 tem um peso associado, que se refere ao custo de transporte de um vértice ao
 outro. O algoritmo escolhido para encontrar o menor caminho é o algoritmo de
-Dijkstra.
-
-O Dijkstra funciona da seguinte forma:
+Dijkstra. O Dijkstra funciona da seguinte forma:
 
 Chamemos o vértice de onde começamos de \emph{vértice inicial} e \emph{distância
-    do nó $Y$} a distância entre o vértice inicial até o vértice $Y$. O
+  do nó $Y$} a distância entre o vértice inicial até o vértice $Y$. O
 algoritmo atribui valores iniciais de distância e vai melhorando a cada
 itereção, como segue:
 
 \begin{enumerate}
 \item Marque todos os vértices não visitados. Crie um conjunto de todos os
-    vértices não visitados chamado \emph{conjunto não visitado} $Q$.
+  vértices não visitados chamado \emph{conjunto não visitado} $Q$.
+
 \item Atribua a cada vértice uma \emph{tentativa de distância}: atribua a zero
-    para o nosso vértice inicial e infinito para todos os outros vértices. O
-    vértice inicial será nosso \emph{vértice atual}.
+  para o nosso vértice inicial e infinito para todos os outros vértices. O
+  vértice inicial será nosso \emph{vértice atual}.
+
 \item Para o vértice atual $v$, considere todos os seus vizinhos não visitados
-    $v' \in Q$ e calcule sua \emph{tentativa de distância} através do nó atual.
-    Compare a nova \emph{tentativa de distância} com a atualmente atribuída e
-    atribua a menor entre elas.
+  $v' \in Q$ e calcule sua \emph{tentativa de distância} através do nó atual.
+  Compare a nova \emph{tentativa de distância} com a atualmente atribuída e
+  atribua a menor entre elas.
+
 \item Após considerar todos os vizinhos do vértice atual $v$, marque o vértice
-    atual como visitado e o remova do conjunto não visitado. Um vértice visitado
-    nunca vai ser verificado novamente.
+  atual como visitado e o remova do conjunto não visitado. Um vértice visitado
+  nunca vai ser verificado novamente.
+
 \item Se o vértice de destino $d$ tiver sido marcado como visitado, ou se a
-    menor tentativa de distância entre os vértices do conjunto $Q$ for infinito,
-    então pare. O algoritmo terminou.
+  menor tentativa de distância entre os vértices do conjunto $Q$ for infinito,
+  então pare. O algoritmo terminou.
+
 \item Caso contrário, escolha o vértice $u$ do conjunto $Q$ de vértices não
-    visitados que está marcado com a menor tentativa de distância; $u$ será o
-    ``vértice atual''. Volte ao passo 3.
+  visitados que está marcado com a menor tentativa de distância; $u$ será o
+  ``vértice atual''. Volte ao passo 3.
 \end{enumerate}
 
 A complexidade do algoritmo de Dijkstra é $O(m \log n + n)$, visto que visitamos
@@ -294,15 +283,125 @@ algoritmo teremos, por corretude do algoritmo de Edmonds e Karp, o fluxo
 desejado na rede, e por meio da nossa escolha de caminhos de aumento de fluxo,
 teremos que este fluxo será o de menor custo associado.
 
-Analogamente ao algoritmo de Edmonds e Karp original, a complexidade deste
-algoritmo é $O(nm) \times T(n,m)$ onde $T(n,m)$ é a complexidade do algoritmo de
-menor caminho utilizado, $m$ é a quantidade de arestas e $n$ a quantidade de
-vértices. A complexide $T(n,m)$ do algoritmo de Dijkstra implementado é
-$O((m + n) \log n)$, visto que ele foi implementado com lista de adjacência e file de
-prioridade,
+Tendo que $m$ é a quantidade de arestas e $n$ é a quantidade de vértices, a
+complexidade do Edmonds e Karp é $O(mn) \times B(m,n)$, onde $B(m,n)$ é a
+complexidade da busca em largura. Como cada arco é visitado no máximo duas vezes
+($O(m)$); existem, no máximo, $m$ caminhos de aumento de fluxo em redes com
+$1 \leq k \leq m-1$ arcos entre a fonte e o sumidouro, cada aumento de fluxo
+requer no máximo ($O(m)$) passos; temos, no máximo, $n-1$ iterações ($O(n)$) e a
+complexidade da busca em largura é $O(m)$, temos que a complexidade final do
+algoritmo é $O(m^2 n)$.
 
-Tomando como caso espécifico o algoritmo de Djikstra
-temos $O(m^2 n + n^2 \log n)$.
+Analogamente ao algoritmo de Edmonds e Karp original, a complexidade deste
+algoritmo é $O(mn) \times T(m,n)$ onde $T(m,n)$ é a complexidade do algoritmo de
+menor caminho utilizado. Visto que a complexidade do algoritmo de Dijkstra, dado
+no final da seção \ref{subsec:dijkstra}, é $O(m \log n + n)$, a complexidade
+final do nosso algoritmo será $O(m^2 n \log n + m n^2)$.
+
+\section{Como usar o algoritmo}
+\label{sec:usage}
+
+A implementação pode ser encontrada no
+\href{https://github.com/MaxWillf/min-cost-flow}{GitHub}. Após clonar o
+repositório ou baixar os arquivos, basta executar o comando
+
+\begin{verbatim}
+make
+\end{verbatim}
+
+\noindent na pasta raiz do projeto (provavelmente com o nome
+\texttt{min-cost-flow}). Isto irá gerar um arquivo chamado
+\texttt{min-cost-flow} nesta mesma pasta, este é o arquivo usado para executar o
+projeto.
+
+O programa recebe como argumento um arquivo de texto contendo a descrição das
+arestas de um grafo. Cada arquivo de texto é tratado como um grafo diferente e a
+pasta baixada no repositório já tem dois exemplos de grafos, \texttt{g.txt} e
+\texttt{g2.txt} para serem executados. A primeira linha do arquivo deve ser um
+número que representa o tamanho desse grafo, ou seja, o número de arestas que
+ele tem. As linhas seguintes são descrições de arestas compostas por quatro
+números; o primeiro número é o rótulo do vértice de origem daquela aresta; o
+segundo número é o rótulo do vértice de destino; o terceiro número é o peso
+associado aquela aresta; e o último número é a capacidade máxima da aresta. Por
+exemplo, um arquivo contendo as seguintes descrições
+
+\begin{verbatim}
+4
+0 1 2 2
+0 2 8 8
+1 2 1 1
+1 3 6 6
+2 3 1 1
+\end{verbatim}
+
+\noindent irá gerar o seguinte grafo
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=5cm]{alg-graph-example.png}
+  \caption{Grafo gerado a partir de um arquivo}
+  \label{fig:alg-graph-example}
+\end{figure}
+
+\noindent onde cada aresta tem capacidade máxima igual ao peso.
+
+Já o seguinte arquivo
+
+\begin{verbatim}
+7
+0 1 0 70
+0 2 0 130
+1 3 8 500
+1 4 1 500
+2 3 3 500
+3 4 3 500
+3 5 2 500
+3 6 0 70
+4 6 0 80
+5 6 0 50
+\end{verbatim}
+
+\noindent gera o seguinte grafo
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=10cm]{alg-graph-example2.png}
+  \caption{Grafo gerado a partir de um arquivo}
+  \label{fig:alg-graph-example2}
+\end{figure}
+
+\noindent onde o primeiro número em cada aresta é o peso e o segundo é
+capacidade máxima dela.
+
+Note que as arestas de rótulo 0 e $n-1$, onde $n$ é o número de arestas
+especificado na primeira linha do arquivo, representam, respectivamente, os
+vértices fonte e sumidouro.
+
+Para executar o programa basta colocar o caminho completo até o arquivo
+executável gerado após a execução do comando \texttt{make}, ou, caso esteja na
+pasta principal do projeto, basta executar
+
+\begin{verbatim}
+./min-cost-flow [arquivo de texto com a descrição do grafo]
+\end{verbatim}
+
+Por exemplo
+
+\begin{verbatim}
+./min-cost-flow sample/g.txt
+\end{verbatim}
+
+\noindent executa o programa no grafo especificado no arquivo \texttt{g.txt} na
+pasta \texttt{sample}.
+
+É necessário ter uma versão recente do \texttt{gcc} instalada, ou uma versão
+recente do \texttt{clang}. Caso vá usar o \texttt{clang}, ao o \texttt{make} se
+faz necessário especificar que queremos usar o \texttt{c++} como compilador da
+seguinte forma
+
+\begin{verbatim}
+make CXX=c++
+\end{verbatim}
 
 \section{Conclusão}
 \label{sec:conclusion}
@@ -311,8 +410,7 @@ Além de categorizar o problema de abastecimento entre fábricas e lojas como um
 problema de fluxo à custo mínimo, apresentamos sua modelagem e algumas soluções
 que podem resolvê-lo em tempo polinomial. Mostramos que podem ser diversas as
 abordagens para o mesmo problema, enquanto uma variante de Edmonds e Karp
-juntamente com o algoritmo de Dikstra pode ser o suficiente, este problema
+juntamente com o algoritmo de Dijkstra pode ser o suficiente, este problema
 também pode ser visto como um de programação linear, como no algoritmo simplex.
 
 \end{document}
-
