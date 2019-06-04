@@ -33,28 +33,28 @@ talvez seja mais caro enviar o mesmo caminhão para duas cidades em direções
 opostas do que enviar um caminhão para cada cidade.
 
 No contexto de grafos, as fábricas e as lojas são tratadas como vértices e as
-arestas são as "estradas" entre as localizações de cada dois vertices.
+arestas são as ``estradas'' entre as localizações de cada dois vertices.
 
 \section{Modelagem do problema}
 \label{sec:modelling}
 
 Como mencionado na seção \ref{sec:intro}, cada vértice representa ou uma fábrica
 ou uma loja, e as arestas entre cada dois vértices representariam um trajeto
-possível entre as duas localizaçoes (uma "estrada"). Neste trabalho trataremos
+possível entre as duas localizaçoes (uma ``estrada''). Neste trabalho trataremos
 este como um problema de fluxo à custo mínimo. Assim, serão necessárias algumas
 modificações no grafo. A princípio, adicionaremos informações nas arestas, as
 quais conterão os valores da capacidade mínimo e máxiao que pode percorrer esta
 aresta e também um valor inteiro não-negativo associado ao custo de transporte
 de uma unidade de um produto por esta estrada. Outro detalhe a ser corrigido é
 que, para que os vértices sejam conservativos, precisamos garantir de alguma
-maneira que o fluxo dos produtos ao chegarem em suas lojas "escorram" para algum
-sumidouro, apesar de efetivamente os produtos permanecerem nas lojas. Assim,
-cria-se uma aresta com custo 0 entre o vertice da loja e um novo sumidouro com
-fluxo máximo igual à capacidade de estoque da loja, analogamente cria-se uma
-fonte com arestas de peso 0 para os vértices de fábrica com fluxo mínimo e
-máximo igual à produção da fábrica em questão. Todas as arestas entre vértices
-que não são fonte nem sumidouro tem capacidade mínima igual a 0 e capacidade
-máxima infinita.
+maneira que o fluxo dos produtos ao chegarem em suas lojas ``escorram'' para
+algum sumidouro, apesar de efetivamente os produtos permanecerem nas lojas.
+Assim, cria-se uma aresta com custo 0 entre o vertice da loja e um novo
+sumidouro com fluxo máximo igual à capacidade de estoque da loja, analogamente
+cria-se uma fonte com arestas de peso 0 para os vértices de fábrica com fluxo
+mínimo e máximo igual à produção da fábrica em questão. Todas as arestas entre
+vértices que não são fonte nem sumidouro tem capacidade mínima igual a 0 e
+capacidade máxima infinita.
 
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{grafo.png}
@@ -170,36 +170,36 @@ mais especificamente caso a função de custo das arestas seja linearmente
 convexa.
 
 \begin{itemize}
-\item Morton Klein (1967). "A primal method for minimal cost flows with
-    applications to the assignment and transportation problems". Management
-    Science. 14 (3): 205–220. CiteSeerX 10.1.1.228.7696.
-    doi:10.1287/mnsc.14.3.205.
+\item Morton Klein (1967). ``A primal method for minimal cost flows with
+  applications to the assignment and transportation problems''. Management
+  Science. 14 (3): 205–220. CiteSeerX 10.1.1.228.7696.
+  doi:10.1287/mnsc.14.3.205.
 \end{itemize}
 
 Algoritmo cuja solução proposta para o problema é acabar com todos os ciclos
 negativos no grafo.
 
 \begin{itemize}
-\item Andrew V. Goldberg \& Robert E. Tarjan (1989). "Finding minimum-cost
-    circulations by canceling negative cycles". Journal of the ACM. 36 (4):
-    873–886. doi:10.1145/76359.76368.
+\item Andrew V. Goldberg \& Robert E. Tarjan (1989). ``Finding minimum-cost
+  circulations by canceling negative cycles''. Journal of the ACM. 36 (4):
+  873–886. doi:10.1145/76359.76368.
 \end{itemize}
 
 Artigo com solução para o problema de fluxo à custo mínimo, mais especificamente
 voltado para um subset deste, chamado assignment problem.
 
 \begin{itemize}
-\item Jack Edmonds \& Richard M. Karp (1972). "Theoretical improvements in
-    algorithmic efficiency for network flow problems". Journal of the ACM. 19
-    (2): 248–264. doi:10.1145/321694.321699.
+\item Jack Edmonds \& Richard M. Karp (1972). ``Theoretical improvements in
+  algorithmic efficiency for network flow problems''. Journal of the ACM. 19
+  (2): 248–264. doi:10.1145/321694.321699.
 \end{itemize}
 
 Algoritmo de Goldberg e Tarjan que utiliza-se de programação linear e o conceito
 de scaling para encontrar um algoritmo de complexidade O(n2(logn)log(nC)).
 
 \begin{itemize}
-\item Andrew V. Goldberg \& Robert E. Tarjan (1990). "Finding minimum-cost
-  circulations by successive approximation". Math. Oper. Res. 15 (3): 430–466.
+\item Andrew V. Goldberg \& Robert E. Tarjan (1990). ``Finding minimum-cost
+  circulations by successive approximation''. Math. Oper. Res. 15 (3): 430–466.
   doi:10.1287/moor.15.3.430.
 \end{itemize}
 
@@ -207,8 +207,8 @@ Algoritmo network simplex, subset do algoritmo simplex clássico da programaçã
 linear.
 
 \begin{itemize}
-\item James B. Orlin (1997). "A polynomial time primal network simplex algorithm
-  for minimum cost flows". Mathematical Programming. 78 (2): 109–129.
+\item James B. Orlin (1997). ``A polynomial time primal network simplex
+  algorithm for minimum cost flows''. Mathematical Programming. 78 (2): 109–129.
   doi:10.1007/bf02614365. hdl:1721.1/2584.
 \end{itemize}
 
