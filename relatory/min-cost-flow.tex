@@ -1,12 +1,12 @@
-\documentclass[12pt, a4]{article}
+\documentclass[12pt,a4]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{float}
 \usepackage{hyperref}
-
-\usepackage{biblatex}
-\addbibresource{sample.bib}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[nottoc]{tocbibind}
 
 \graphicspath{./imgs}
 
@@ -33,23 +33,23 @@ talvez seja mais caro enviar o mesmo caminhão para duas cidades em direções
 opostas do que enviar um caminhão para cada cidade.
 
 No contexto de grafos, as fábricas e as lojas são tratadas como vértices e as
-arestas são as ``estradas'' entre as localizações de cada dois vertices.
+arestas são as ``estradas'' entre as localizações de cada dois vértices.
 
 \section{Modelagem do problema}
 \label{sec:modelling}
 
 Como mencionado na seção \ref{sec:intro}, cada vértice representa ou uma fábrica
 ou uma loja, e as arestas entre cada dois vértices representariam um trajeto
-possível entre as duas localizaçoes (uma ``estrada''). Neste trabalho trataremos
+possível entre as duas localizações (uma ``estrada''). Neste trabalho trataremos
 este como um problema de fluxo à custo mínimo. Assim, serão necessárias algumas
 modificações no grafo. A princípio, adicionaremos informações nas arestas, as
-quais conterão os valores da capacidade mínimo e máxiao que pode percorrer esta
+quais conterão os valores da capacidade mínimo e máximo que pode percorrer esta
 aresta e também um valor inteiro não-negativo associado ao custo de transporte
 de uma unidade de um produto por esta estrada. Outro detalhe a ser corrigido é
 que, para que os vértices sejam conservativos, precisamos garantir de alguma
 maneira que o fluxo dos produtos ao chegarem em suas lojas ``escorram'' para
 algum sumidouro, apesar de efetivamente os produtos permanecerem nas lojas.
-Assim, cria-se uma aresta com custo 0 entre o vertice da loja e um novo
+Assim, cria-se uma aresta com custo 0 entre o vértice da loja e um novo
 sumidouro com fluxo máximo igual à capacidade de estoque da loja, analogamente
 cria-se uma fonte com arestas de peso 0 para os vértices de fábrica com fluxo
 mínimo e máximo igual à produção da fábrica em questão. Todas as arestas entre
@@ -68,14 +68,14 @@ capacidade máxima infinita.
 Dada a modelagem proposta, a estrutura dos vértices não difere da estrutura de
 um vértice em um problema qualquer de grafos, visto que a informação vital
 necessária para a solução do problema reside nas arestas, no mínimo seria
-necessário que cada vértice armazenasse um id e os vértices adjacentes,
-dependendo da forma de implementação.
+necessário que cada vértice armazenasse um identificador e os vértices
+adjacentes, dependendo da forma de implementação.
 
 \subsection{Arcos}
 \label{subsec:arches}
 
 Os arcos, sendo os portadores das informações essenciais para a solução deste
-problema, possuem os valores das capacidades minimas e máximas das arestas (em
+problema, possuem os valores das capacidades mínimas e máximas das arestas (em
 relação ao fluxo) e o valor do custo para transportar uma unidade do produto por
 meio deles. Os arcos entre a fonte e as fábricas possuem capacidade mínima igual
 à máxima, representativa da produção real da fábrica. Os arcos entre as lojas e
@@ -89,9 +89,9 @@ máxima infinita.
 \subsection{Minimum Mean Cycle-Cancelling}
 \label{subsec:min-mean-cycle-cancelling}
 
-A princípio, para cada aresta entre dois vertices $(u,v)$ cria-se uma aresta
+A princípio, para cada aresta entre dois vértices $(u,v)$ cria-se uma aresta
 $(v,u)$ com custo $c(v,u) = -c(u,v)$. Definimos o custo de um ciclo como a soma
-dos pesos das arestas que o compõem. A ideia por trás deste algoritmo de
+dos pesos das arestas que o compõem. A idéia por trás deste algoritmo de
 Goldberg e Tarjan é: se não houver nenhum ciclo na rede residual cujo custo for
 negativo, então este fluxo é de custo mínimo.
 
@@ -126,15 +126,15 @@ $\langle T,L,U \rangle$ como uma \textit{estrutura básica} o fluxo $x$ associad
 
 \item Para cada arco $(u,v) \in L$: $x_{ij} = l_{ij}$.
 
-\item Para os outros arcos, obtem-se valores quaisquer com a restrição apenas de
-    que os vértices se mantenham conservativos.Dizemos que esta estrutura tem
-    circulação viável se para todo arco de $T$ temos que
-    $l_{ij} \leq x_{ij} \leq u_{ij}$.
+\item Para os outros arcos, obtém-se valores quaisquer com a restrição apenas de
+  que os vértices se mantenham conservativos. Dizemos que esta estrutura tem
+  circulação viável se para todo arco de $T$ temos que
+  $l_{ij} \leq x_{ij} \leq u_{ij}$.
 \end{itemize}
 
 Denotemos como $G^*(x)$ o subgrafo da rede residual $G(x)$ em relação ao fluxo
 $x$ na qual todos os arcos da arvore geradora $T$ e seus arcos reversos foram
-deletados. Isto é: $(u,v) \in G^*(x)$ se $(u,v) \in G(x)$ mas
+excluídos. Isto é: $(u,v) \in G^*(x)$ se $(u,v) \in G(x)$ mas
 $(v,u) \notin G(x)$.
 
 Denotemos também uma arvore $T(v)$ como um subgrafo de $G(x)$ no qual todos os
@@ -165,52 +165,23 @@ Assim, podemos definir o algoritmo em sua totalidade como abaixo:
 
 Soluções para este problema cuja menção é indispensável encontram-se abaixo:
 
-O algoritmo de Morton Klein utiliza-se de propriedades de programação linear,
-mais especificamente caso a função de custo das arestas seja linearmente
-convexa.
+O algoritmo de Morton Klein \cite{ar:klein97} utiliza-se de propriedades
+de programação linear, mais especificamente caso a função de custo das arestas
+seja linearmente convexa.
 
-\begin{itemize}
-\item Morton Klein (1967). ``A primal method for minimal cost flows with
-  applications to the assignment and transportation problems''. Management
-  Science. 14 (3): 205–220. CiteSeerX 10.1.1.228.7696.
-  doi:10.1287/mnsc.14.3.205.
-\end{itemize}
+Algoritmo de Goldberg \& Tarjan \cite{ar:goldberg-tarjan89} cuja solução
+proposta para o problema é acabar com todos os ciclos negativos no grafo.
 
-Algoritmo cuja solução proposta para o problema é acabar com todos os ciclos
-negativos no grafo.
+Artigo de Edmonds \& Karp \cite{ar:edmonds-karp72} com solução para o problema
+de fluxo à custo mínimo, mais especificamente voltado para um subset deste,
+chamado assignment problem.
 
-\begin{itemize}
-\item Andrew V. Goldberg \& Robert E. Tarjan (1989). ``Finding minimum-cost
-  circulations by canceling negative cycles''. Journal of the ACM. 36 (4):
-  873–886. doi:10.1145/76359.76368.
-\end{itemize}
+Algoritmo de Goldberg \& Tarjan \cite{ar:goldberg-tarjan90} que utiliza-se de
+programação linear e o conceito de dimensionamento (\emph{scaling}) para
+encontrar um algoritmo de complexidade $O(n^2(\log n) \log(nC))$.
 
-Artigo com solução para o problema de fluxo à custo mínimo, mais especificamente
-voltado para um subset deste, chamado assignment problem.
-
-\begin{itemize}
-\item Jack Edmonds \& Richard M. Karp (1972). ``Theoretical improvements in
-  algorithmic efficiency for network flow problems''. Journal of the ACM. 19
-  (2): 248–264. doi:10.1145/321694.321699.
-\end{itemize}
-
-Algoritmo de Goldberg e Tarjan que utiliza-se de programação linear e o conceito
-de scaling para encontrar um algoritmo de complexidade O(n2(logn)log(nC)).
-
-\begin{itemize}
-\item Andrew V. Goldberg \& Robert E. Tarjan (1990). ``Finding minimum-cost
-  circulations by successive approximation''. Math. Oper. Res. 15 (3): 430–466.
-  doi:10.1287/moor.15.3.430.
-\end{itemize}
-
-Algoritmo network simplex, subset do algoritmo simplex clássico da programação
-linear.
-
-\begin{itemize}
-\item James B. Orlin (1997). ``A polynomial time primal network simplex
-  algorithm for minimum cost flows''. Mathematical Programming. 78 (2): 109–129.
-  doi:10.1007/bf02614365. hdl:1721.1/2584.
-\end{itemize}
+Algoritmo network simplex, de James B. Orlin \cite{in:orlin96}, subconjunto do
+algoritmo simplex clássico da programação linear.
 
 \section{Solução escolhida}
 \label{sec:solution}
@@ -223,43 +194,44 @@ utilizar um algoritmo de busca diferente para encontrar o menor caminho, visto
 que dada modelagem do problema feita na seção \ref{sec:modelling} cada aresta
 tem um peso associado, que se refere ao custo de transporte de um vértice ao
 outro. O algoritmo escolhido para encontrar o menor caminho é o algoritmo de
-Dijkstra. O Dijkstra funciona da seguinte forma:
+Dijkstra.
 
 Chamemos o vértice de onde começamos de \emph{vértice inicial} e \emph{distância
-  do nó $Y$} a distância entre o vértice inicial até o vértice $Y$. O
-algoritmo atribui valores iniciais de distância e vai melhorando a cada
-itereção, como segue:
+  do nó} $Y$ a distância entre o vértice inicial até o vértice $Y$. O Dijkstra
+pode ser implementado utilizando uma fila de prioridade que contenha os métodos
+\texttt{adicionarComPrioridade}, \texttt{extrairMenor} e
+\texttt{diminuirPrioridade} da seguinte forma:
 
-\begin{enumerate}
-\item Marque todos os vértices não visitados. Crie um conjunto de todos os
-  vértices não visitados chamado \emph{conjunto não visitado} $Q$.
+\begin{algorithm}[H]
+  \SetAlgoLined
+  \KwResult{ dist[],prev[] }
+  Crie um conjunto de vertices nao visitados Q. \\
+  Para cada vertice v no Grafo faça: \\
+  dist[v] = INFINITO \\
+  prev[v] = indefinido \\
+  dist[fonte] = 0 \\
+  Q.adicionarComPrioridade(dist[v],v) \\
 
-\item Atribua a cada vértice uma \emph{tentativa de distância}: atribua a zero
-  para o nosso vértice inicial e infinito para todos os outros vértices. O
-  vértice inicial será nosso \emph{vértice atual}.
+  \While{Q não está vazio}{
+    u = Q.extrairMenor() \\
+    para cada vertice adjacente v de u:  \\
+    \quad    alt = dist[u] + peso(u,v)  \\
+    \quad    se alt $<$ dist[v]: \\
+    \quad        dist[v] = alt \\
+    \quad        prev[v] = u \\
+    \quad        Q.diminuirPrioridade(alt,v) \\
+  }
 
-\item Para o vértice atual $v$, considere todos os seus vizinhos não visitados
-  $v' \in Q$ e calcule sua \emph{tentativa de distância} através do nó atual.
-  Compare a nova \emph{tentativa de distância} com a atualmente atribuída e
-  atribua a menor entre elas.
+  return dist[],prev[]
+  \caption{Djikstra com fila de prioridade}
+\end{algorithm}
 
-\item Após considerar todos os vizinhos do vértice atual $v$, marque o vértice
-  atual como visitado e o remova do conjunto não visitado. Um vértice visitado
-  nunca vai ser verificado novamente.
-
-\item Se o vértice de destino $d$ tiver sido marcado como visitado, ou se a
-  menor tentativa de distância entre os vértices do conjunto $Q$ for infinito,
-  então pare. O algoritmo terminou.
-
-\item Caso contrário, escolha o vértice $u$ do conjunto $Q$ de vértices não
-  visitados que está marcado com a menor tentativa de distância; $u$ será o
-  ``vértice atual''. Volte ao passo 3.
-\end{enumerate}
-
-A complexidade do algoritmo de Dijkstra é $O(m \log n + n)$, visto que visitamos
-cada nó uma vez ($O(n)$) e acessamos cada vértice adjacente exatamente duas
-vezes ($O(m)$), cada vez acessando a lista de prioridade no máximo duas vezes
-($O(\log n)$).
+Em nossa implementação de fila de prioridade utilizamos uma heap binária com uma
+HashTable anexada para garantir acesso em O(1) aos indices dos elementos dentro
+da heap, de forma à permitir o ajuste de prioridade em $O(logn)$. A complexidade
+do algoritmo de Dijkstra é $O(m \log n + n)$, visto que visitamos cada nó uma
+vez ($O(n)$) e acessamos cada vértice adjacente exatamente duas vezes ($O(m)$),
+cada vez acessando a lista de prioridade no máximo duas vezes ($O(\log n)$).
 
 \subsection{Edmonds e Karp}
 \label{subsec:edmonds-karp}
@@ -318,20 +290,20 @@ O programa recebe como argumento um arquivo de texto contendo a descrição das
 arestas de um grafo. Cada arquivo de texto é tratado como um grafo diferente e a
 pasta baixada no repositório já tem dois exemplos de grafos, \texttt{g.txt} e
 \texttt{g2.txt} para serem executados. A primeira linha do arquivo deve ser um
-número que representa o tamanho desse grafo, ou seja, o número de arestas que
-ele tem. As linhas seguintes são descrições de arestas compostas por quatro
-números; o primeiro número é o rótulo do vértice de origem daquela aresta; o
-segundo número é o rótulo do vértice de destino; o terceiro número é o peso
-associado aquela aresta; e o último número é a capacidade máxima da aresta. Por
-exemplo, um arquivo contendo as seguintes descrições
+número que representa a ordem desse grafo, ou seja, o número de arestas que ele
+tem. As linhas seguintes são descrições de arestas compostas por quatro números;
+o primeiro número é o rótulo do vértice de origem daquela aresta; o segundo
+número é o rótulo do vértice de destino; o terceiro número é o peso associado
+aquela aresta; e o último número é a capacidade máxima da aresta. Por exemplo,
+um arquivo contendo as seguintes descrições
 
 \begin{verbatim}
 4
-0 1 2 2
-0 2 8 8
+0 1 8 8
+0 2 6 6
 1 2 1 1
-1 3 6 6
-2 3 1 1
+1 3 1 1
+2 3 6 6
 \end{verbatim}
 
 \noindent irá gerar o seguinte grafo
@@ -412,5 +384,8 @@ que podem resolvê-lo em tempo polinomial. Mostramos que podem ser diversas as
 abordagens para o mesmo problema, enquanto uma variante de Edmonds e Karp
 juntamente com o algoritmo de Dijkstra pode ser o suficiente, este problema
 também pode ser visto como um de programação linear, como no algoritmo simplex.
+
+\bibliographystyle{unsrt}
+\bibliography{index}
 
 \end{document}
